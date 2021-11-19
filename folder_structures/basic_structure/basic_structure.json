@@ -53,7 +53,7 @@
         },
         "shot":
         {
-            "path":"{root}/{project_name}/{sequence_name}/shots/{shot_name}",
+            "path":"{root}/{project_name}/shots/{sequence_name}/{shot_name}",
             "type": "shot",
             "primary_key":"shot_name",
             "requires":["root","sequence"],
@@ -81,17 +81,17 @@
         },
         "sequence":
         {
-            "path":"{root}/{project_name}/{sequence_name}/shots/{shot_name}",
-            "type": "shot",
+            "path":"{root}/{project_name}/shots/{sequence_name}",
+            "type": "sequence",
             "primary_key":"sequence_name",
             "requires":["root"],
             "numbered":true,
             "args": [
                 {
-                    "name":"shot_name",
-                    "label": "Enter Shot Name.",
+                    "name":"sequence_name",
+                    "label": "Enter Sequence Name.",
                     "data_type": "str",
-                    "default": "sh010"
+                    "default": "seq010"
                 }
             ]
         }

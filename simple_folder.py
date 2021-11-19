@@ -92,13 +92,15 @@ def get_context_for_object(object, kwargs={}):
     returns (dict) - context dict for string formatting
     '''
     # instantiate a dictionary to hold args
+    if kwargs == None:
+        kwargs = {}
     context = kwargs
     # iterate through arguments from the structure object
     for item in object.get("args", []):
         
         # check the supplied command line args for values. If they exists
         # we can skip asking the user
-        if not kwargs.get(item["name"]):
+        if kwargs.get(item["name"]) == None:
             # set the key for the dictionary equal to the name of the arg
             # set the value equal to the either user input or the default value
             context[item["name"]] = capture_input(item["label"], item["default"], item["data_type"])
@@ -359,8 +361,8 @@ def add_folders_to_root(folder_type=None, root_path=None, kwargs={}):
     if not root_path:
         print()
         root_path = capture_input("Enter Starting Path to Search for Root Folders.", default="C:")
-
-    root_path = select_root(root_path)
+    if not root_path.endswith(".json"):
+        root_path = select_root(root_path)
 
     root_info = get_root_info(root_path)
     structure_object = root_info.get("structure", {})
@@ -369,11 +371,34 @@ def add_folders_to_root(folder_type=None, root_path=None, kwargs={}):
         folder_type = select_folder_type(structure_object)
 
     folder_object = structure_object[folder_type]
-    context = root_info.get("context", {})
+    context = root_info.get("context", {}).copy()
     context.update(kwargs)
 
-
     context = get_context_for_object(folder_object, context)
+
+    for req in folder_object.get("requires", []):
+
+        req_pk = structure_object[req]["primary_key"]
+
+        if not req_pk in [x for x in context.keys()]:
+            options = root_info.get(req, [])
+            for idx, opt in enumerate(options):
+                options[idx] = opt[req_pk]
+            options.append("New {}".format(req.capitalize()))
+            req_value = selector(options, title="Select {}".format(req.capitalize()), auto_return=False)
+
+            if req_value == options[-1]:
+                new_context = add_folders_to_root(folder_type=req, root_path=root_path, kwargs=context)
+                context.update(new_context)
+                print(json.dumps(context))
+                return add_folders_to_root(folder_type=folder_type, root_path=root_path, kwargs=context)
+
+            else:
+                context[req_pk] = req_value
+                
+
+
+
 
     create_directories(folder_object, context)
 
@@ -383,6 +408,8 @@ def add_folders_to_root(folder_type=None, root_path=None, kwargs={}):
 
     root_info[folder_type] = items
     update_root_info(root_path, root_info)
+
+    return context
 
 
 
