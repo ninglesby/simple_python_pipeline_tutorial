@@ -1,0 +1,99 @@
+{
+    "structure": {"root":
+        {
+        "path":"{root}/{project_name}",
+        "type":"project",
+        "primary_key":"project_name",
+        "requires":[],
+        "args": [
+            {
+                "name":"root",
+                "label":"Enter Projects Root.",
+                "data_type":"str",
+                "default":"F:"
+            },
+            {
+                "name":"project_name",
+                "label":"Enter Project Name.",
+                "data_type":"str",
+                "default":"default_project"
+            },
+            {
+                "name":"fps",
+                "label":"Enter Project fps.",
+                "data_type":"str",
+                "default":"23.976"
+            }, 
+            {
+                "name":"increments",
+                "label":"Increment New Shots/Sequences By.",
+                "data_type":"int",
+                "default":10
+            }
+    
+        ],
+        "children": [
+            {
+                "path":"{parent_path}/workfiles",
+                "type":"directory",
+                "children": [
+                {
+                    "path":"{parent_path}/c4d",
+                    "type":"directory",
+                    "children": [
+                    {"path":"{parent_path}/tex", "type":"directory"}
+                    ]
+                }
+                ]
+            },
+            {"path":"{parent_path}/previews", "type":"directory"},
+            {"path":"{parent_path}/outputs", "type":"directory"}
+        ]
+    
+        },
+        "shot":
+        {
+            "path":"{root}/{project_name}/{sequence_name}/shots/{shot_name}",
+            "type": "shot",
+            "primary_key":"shot_name",
+            "requires":["root","sequence"],
+            "numbered":true,
+            "args": [
+                {
+                    "name":"shot_name",
+                    "label": "Enter Shot Name.",
+                    "data_type": "str",
+                    "default": "sh010"
+                },
+                {
+                    "name":"start_frame",
+                    "label":"Start Frame",
+                    "data_type":"int",
+                    "default":0
+                },
+                {
+                    "name":"end_frame",
+                    "label":"End Frame",
+                    "data_type":"int",
+                    "default":0
+                }
+            ]
+        },
+        "sequence":
+        {
+            "path":"{root}/{project_name}/{sequence_name}/shots/{shot_name}",
+            "type": "shot",
+            "primary_key":"sequence_name",
+            "requires":["root"],
+            "numbered":true,
+            "args": [
+                {
+                    "name":"shot_name",
+                    "label": "Enter Shot Name.",
+                    "data_type": "str",
+                    "default": "sh010"
+                }
+            ]
+        }
+    }
+  }
