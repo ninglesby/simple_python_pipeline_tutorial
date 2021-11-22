@@ -376,6 +376,13 @@ def add_folders_to_root(folder_type=None, root_path=None, kwargs={}):
 
     context = get_context_for_object(folder_object, context)
 
+    pk = folder_object["primary_key"]
+    pk_values = [x[pk] for x in root_info.get(folder_type, [])]
+
+    if context[pk] in pk_values:
+        print("\n{} Already Exists\n".format(folder_type.capitalize()))
+        context.pop(pk)
+        return add_folders_to_root(folder_type, root_path, context)
     for req in folder_object.get("requires", []):
 
         req_pk = structure_object[req]["primary_key"]
